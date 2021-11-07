@@ -768,7 +768,7 @@ if(get(hObject, 'Value') == 1)                                             % If 
         end
         vout = -sum.*rf;                                                   %    vout = -sum*rf
         vin = eval(vinlist{str2double(get(handles.vinplottxtbox,'String')),:}); % Set vin plot according to the vinplottxtbox
-    elseif(get(handles.circuitselect, 'Value') == 4)        
+    elseif(get(handles.circuitselect, 'Value') == 4)                       %    If summing non-inverting circuit is selected
         vinlist = get(handles.vinsumlist,'String');
         rlist = get(handles.rsumlist,'String');
         [row, ~] = size(vinlist);

@@ -71,4 +71,4 @@ Please consider carefully by using this.
 - user3797886, rayryeng, "How do I make a png with transparency appear transparent in MatLab?," Stack Overflow, 07 August 2014, https://stackoverflow.com/questions/25172389/how-do-i-make-a-png-with-transparency-appear-transparent-in-matlab.
 - MATLAB, "MATLAB Documentation," MathWorks, https://www.mathworks.com/help/matlab/.
 - Maxim Integrated, "GLOSSARY DEFINITION FOR OP AMP," Maxim Integrated, 2020, https://www.maximintegrated.com/en/glossary/definitions.mvp/term/Op%20amp/gpk/883.
-- All About Circuits, "Introduction to Operational Amplifiers (Op-amps)," EETech Media, LLC., https://www.maximintegrated.com/en/glossary/definitions.mvp/term/Op%20amp/gpk/883.
+- All About Circuits, "Introduction to Operational Amplifiers (Op-amps)," EETech Media, LLC., https://www.allaboutcircuits.com/textbook/semiconductors/chpt-8/introduction-operational-amplifiers/.

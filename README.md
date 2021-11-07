@@ -51,7 +51,7 @@ Please consider carefully by using this.
 ![image](https://user-images.githubusercontent.com/4103880/140642588-2ef8a56a-8b1d-4651-8b29-888649ada3c3.png)
 
 ## Using the source code
-- Make sure `GUI.m`, `GUI.fig` and all of the images is in the same folder.
+- Make sure `GUI.m`, `GUI.fig` and all of the images are in the same folder.
 - Run the `GUI` command in MATLAB.
 - That's it.
 

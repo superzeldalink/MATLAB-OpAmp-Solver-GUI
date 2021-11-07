@@ -64,8 +64,8 @@ Please don't copy this source code for your own purpose (e.g. exercises, project
 Please consider carefully by using this.
 
 ## Credits
-- Assoc. Prof. H. H. Kha, Ho Chi Minh City of Technology, "Operational Amplifier".
-- Assoc. Prof. H. H. Kha, Ho Chi Minh City of Technology, "Project OpAmp Sample".
+- Assoc. Prof. H. H. Kha, Ho Chi Minh City University of Technology, "Operational Amplifier".
+- Assoc. Prof. H. H. Kha, Ho Chi Minh City University of Technology, "Project OpAmp Sample".
 - R. Teja, "Summing Amplifier," Electronics Hub, 22 April 2021,  https://www.electronicshub.org/summing-amplifier/.
 - M. Safwat, "How to draw any function using GUI MATLAB.," YouTube, 12 April 2017, https://www.youtube.com/watch?v=ZjH1i9SfNa0.
 - user3797886, rayryeng, "How do I make a png with transparency appear transparent in MatLab?," Stack Overflow, 07 August 2014, https://stackoverflow.com/questions/25172389/how-do-i-make-a-png-with-transparency-appear-transparent-in-matlab.

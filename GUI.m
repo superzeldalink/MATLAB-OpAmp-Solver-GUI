@@ -580,19 +580,19 @@ end
 
 % ---------------------- SELF-DEFINED FUNCTIONS ----------------------
 
-% IF THE PROGRAM IS SOLVING
-% Lock the "Solve" button and change the text into "Please wait..." and
-% revert if done.
-function isSolving(True, handles)
-if(True == false)
-    set(handles.solvebtn, 'String', 'Solve');
-    set(handles.solvebtn, 'Value', 0);
-    set(handles.solvebtn, 'Enable', 'on');
-else
-    set(handles.solvebtn, 'String', 'Please wait...');
-    set(handles.solvebtn, 'Value', 1);
-    set(handles.solvebtn, 'Enable', 'off');
-end
+    % IF THE PROGRAM IS SOLVING
+    % Lock the "Solve" button and change the text into "Please wait..." and
+    % revert if done.
+    function isSolving(True, handles)
+    if(True == false)
+        set(handles.solvebtn, 'String', 'Solve');
+        set(handles.solvebtn, 'Value', 0);
+        set(handles.solvebtn, 'Enable', 'on');
+    else
+        set(handles.solvebtn, 'String', 'Please wait...');
+        set(handles.solvebtn, 'Value', 1);
+        set(handles.solvebtn, 'Enable', 'off');
+    end
 
 % IF SUMMING CIRCUIT IS SELECTED
 % Turn off all items which don't belongs to summing circuit and turn on
@@ -716,7 +716,7 @@ if(get(hObject, 'Value') == 1)                                             % If 
         isSolving(false, handles);                                         %    Triggger "isSolving(false)" function.
     end
     
-    if(isempty(find(rf<0, 1)) == 0 || isempty(find(rf<0, 1)) == 0)         %    If Rf or R is/contains negative value(s), show the error message.
+    if(isempty(find(r<0, 1)) == 0 || isempty(find(rf<0, 1)) == 0)         %    If Rf or R is/contains negative value(s), show the error message.
         message = sprintf('Resistors must not be negative.\nTry to change the time range or resistor functions.');
         uiwait(errordlg(message));
         isSolving(false, handles);                                         %        Triggger "isSolving(false)" function.
@@ -768,7 +768,7 @@ if(get(hObject, 'Value') == 1)                                             % If 
         end
         vout = -sum.*rf;                                                   %    vout = -sum*rf
         vin = eval(vinlist{str2double(get(handles.vinplottxtbox,'String')),:}); % Set vin plot according to the vinplottxtbox
-    elseif(get(handles.circuitselect, 'Value') == 4)                       %    If summing non-inverting circuit is selected
+    elseif(get(handles.circuitselect, 'Value') == 4)        
         vinlist = get(handles.vinsumlist,'String');
         rlist = get(handles.rsumlist,'String');
         [row, ~] = size(vinlist);

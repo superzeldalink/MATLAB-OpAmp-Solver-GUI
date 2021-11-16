@@ -19,7 +19,7 @@ Please consider carefully by using this.
 - [x] Input and output can be plotted on a single axes. 
 - [x] Resistor (potentiometer) can be a function that changes over time (must not be negative).
 - [x] All inputs accept basic operations, e.g., +, -, *, /,^, abs, mod, log,...
-- [ ] Plot all Vin in a same axes (for summing circuit).
+- [x] Plot all Vin in a same axes (for summing circuit).
 - [ ] Plot resistor function.
 - [ ] ??? (new feature(s))
 

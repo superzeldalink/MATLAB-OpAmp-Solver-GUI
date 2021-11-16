@@ -70,8 +70,6 @@ axes(handles.logobk);
 f = imshow(im);
 set(f, 'AlphaData', alpha);
 
-
-
 % --- Outputs from this function are returned to the command line.
 function varargout = GUI_OutputFcn(~, ~, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -538,8 +536,8 @@ if(isnan(value))
     set(handles.vinplottxtbox,'String',1);
 elseif(value > row)
     set(handles.vinplottxtbox,'String',string(row));
-elseif (value < 1)
-    set(handles.vinplottxtbox,'String','1');
+elseif (value < 0)
+    set(handles.vinplottxtbox,'String','0');
 end
 
 function vinsumlist_CreateFcn(hObject, ~, ~)
@@ -569,8 +567,8 @@ if(isnan(value))
     set(hObject,'String',1);
 elseif(value > row)
     set(hObject,'String',string(row));
-elseif (value < 1)
-    set(hObject,'String','1');
+elseif (value < 0)
+    set(hObject,'String','0');
 end
 
 function vinplottxtbox_CreateFcn(hObject, ~, ~)
@@ -650,7 +648,7 @@ end
 function aboutbtn_Callback(~, ~, ~)
 CreateStruct.Interpreter = 'tex';
 CreateStruct.WindowStyle = 'non-modal';
-message = sprintf('{\\bfHo Chi Minh City University of Technology}\n{\\bfProject:} Operational Amplifier Solver\n{\\bfSubject:} Analog Signal Processing\n{\\bfLecturer:} Assoc Prof. Ha Hoang Kha\n{\\bfClass:} TT04 - 211\n{\\bfMembers:}\n+ Luong Trien Thang - 2051194\n+ Nguyen Ngoc Minh Anh - 2051033\n+ Pham Nguyen Trung Tin - 2051203');
+message = sprintf('{\\bfHo Chi Minh City University of Technology}\n{\\bfProject:} Operational Amplifier Solver v1.2\n{\\bfSubject:} Analog Signal Processing\n{\\bfLecturer:} Assoc Prof. Ha Hoang Kha\n{\\bfClass:} TT04 - 211\n{\\bfMembers:}\n+ Luong Trien Thang - 2051194\n+ Nguyen Ngoc Minh Anh - 2051033\n+ Pham Nguyen Trung Tin - 2051203');
 uiwait(msgbox(message,CreateStruct));
 
 % ---------------------- MAIN PROGRAM ----------------------
@@ -716,11 +714,15 @@ if(get(hObject, 'Value') == 1)                                             % If 
         isSolving(false, handles);                                         %    Triggger "isSolving(false)" function.
     end
     
-    if(isempty(find(r<0, 1)) == 0 || isempty(find(rf<0, 1)) == 0)         %    If Rf or R is/contains negative value(s), show the error message.
+    if(isempty(find(r<0, 1)) == 0 || isempty(find(rf<0, 1)) == 0)          %    If Rf or R is/contains negative value(s), show the error message.
         message = sprintf('Resistors must not be negative.\nTry to change the time range or resistor functions.');
         uiwait(errordlg(message));
         isSolving(false, handles);                                         %        Triggger "isSolving(false)" function.
         return;                                                            %        Stop the function.
+    end
+    
+    if (isequal(size(vin),[1 1]))                                          %    If vin is DC
+        vin = vin*ones(size(t));                                           %        Create an array with all are the same value DC with size t.
     end
     
     if(get(handles.circuitselect, 'Value') == 1)                           %    If inverting circuit is selected
@@ -728,47 +730,71 @@ if(get(hObject, 'Value') == 1)                                             % If 
     elseif(get(handles.circuitselect, 'Value') == 2)                       %    If non-inverting circuit is selected
         vout = (rf/r+1).*vin;                                              %        Calculate vout.
     elseif(get(handles.circuitselect, 'Value') == 3)                       %    If summing inverting circuit is selected
+        vinplot = str2double(get(handles.vinplottxtbox,'String'));         %        Get value of vinplottxtbox.
+        
         vinlist = get(handles.vinsumlist,'String');                        %        Get values of vinlist and rlist.
         rlist = get(handles.rsumlist,'String');
-        [row, ~] = size(vinlist);                                          %    Get the number of rows of two of them
+        [row, ~] = size(vinlist);                                          %        Get the number of rows of two of them
         [row2, ~] = size(rlist);
-        if(row ~= row2)                                                    %    If row of vinlist is not equal to row of rlist, show the error message.
+        if(row ~= row2)                                                    %        If row of vinlist is not equal to row of rlist, show the error message.
             message = sprintf('The number of Vins and the number of resistors must be equal.');
             uiwait(errordlg(message));
-            isSolving(false, handles);                                     %        Triggger "isSolving(false)" function.
-            return;                                                        %        Stop the function.
+            isSolving(false, handles);                                     %            Triggger "isSolving(false)" function.
+            return;                                                        %            Stop the function.
         end
         
-        sum = 0;                                                           %    Initiate sum.
-        for i=1:row                                                        %    For each row
+        sum = 0;                                                           %        Initiate sum.
+        for i=1:row                                                        %        For each row
             try
-                r_ = eval([rlist{i,:},'*1000']);                           %    Try to evaluate r line i
-            catch ME                                                       %    If failed, show the error message
+                r_ = eval([rlist{i,:},'*1000']);                           %            Try to evaluate r line i
+            catch ME                                                       %            If failed, show the error message
                 message = sprintf('Error in Resistors list line %d:\n%s', i, ME.message);
                 uiwait(errordlg(message));
-                isSolving(false, handles);                                 %        Triggger "isSolving(false)" function.
+                isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
             end
             
-            if(isempty(find(eval(rlist{i,:})<0, 1)) == 0)                  %    If R line i is/contains negative value, show the error message.
+            if(isempty(find(eval(rlist{i,:})<0, 1)) == 0)                  %        If R line i is/contains negative value, show the error message.
                 message = sprintf('Resistors must not be negative.\nTry to change the time range or resistor functions.');
                 uiwait(errordlg(message));
-                isSolving(false, handles);                                 %        Triggger "isSolving(false)" function.
-                return;                                                    %        Stop the function.
+                isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
+                return;                                                    %            Stop the function.
             end
             
             try
-                vin_ = eval(vinlist{i,:});                                 %    Try to evaluate vin line i
-            catch ME                                                       %    If failed, show the error message
+                vin_ = eval(vinlist{i,:});                                 %        Try to evaluate vin line i
+            catch ME                                                       %        If failed, show the error message
                 message = sprintf('Error in Vin list line %d:\n%s', i, ME.message);
                 uiwait(errordlg(message));
-                isSolving(false, handles);                                 %        Triggger "isSolving(false)" function.
+                isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
             end
             
-            sum = sum + vin_./r_;                                          %    sum = sum + vin_line_i/r_line_i
+            sum = sum + vin_./r_;                                          %        sum = sum + vin_line_i/r_line_i
         end
-        vout = -sum.*rf;                                                   %    vout = -sum*rf
-        vin = eval(vinlist{str2double(get(handles.vinplottxtbox,'String')),:}); % Set vin plot according to the vinplottxtbox
-    elseif(get(handles.circuitselect, 'Value') == 4)        
+        
+        if(vinplot == 0)                                                   %        If plot vin textbox == 0
+            vin = [];                                                      %            Create a blank array.
+            for i=1:row                                                    %            For each vin from vinlist, add to that new array
+                value = eval(vinlist{i,:});                                %                this will create a [vin x t] array that contains
+                if (isequal(size(value),[1 1]))                            %                all of the vins.
+                    vin = [vin;value*ones(size(t))];
+                else
+                    vin = [vin;value];
+                end
+            end
+        else                                                               %        Else
+            vin = eval(vinlist{vinplot,:});                                %            Plot selected vin.
+            if (isequal(size(vin),[1 1]))
+                vin = vin*ones(size(t));
+            end
+        end
+        
+        vout = -sum.*rf;                                                   %        vout = -sum*rf
+        if (isequal(size(vout),[1 1]))
+            vout = vout*ones(size(t));
+        end
+    elseif(get(handles.circuitselect, 'Value') == 4)                       %    If summing non-inverting circuit is selected
+        vinplot = str2double(get(handles.vinplottxtbox,'String'));         %        Same as above.
+        
         vinlist = get(handles.vinsumlist,'String');
         rlist = get(handles.rsumlist,'String');
         [row, ~] = size(vinlist);
@@ -776,90 +802,79 @@ if(get(hObject, 'Value') == 1)                                             % If 
         if(row ~= row2)
             message = sprintf('The number of Vins and the number of resistors must be equal.');
             uiwait(errordlg(message));
-            isSolving(false, handles);                                     %    Triggger "isSolving(false)" function.
-            return;                                                        %        Stop the function.
+            isSolving(false, handles);                                     
+            return;                                         
         end
         
-        sum1 = 0;                                                          % Initiate sum1 and sum2.
+        sum1 = 0;                                                          %        Initiate sum1 and sum2.
         sum2 = 0;                                                          
         for i=1:row
             try
-                r_ = eval([rlist{i,:},'*1000']);                           %    Try to evaluate r line i
-            catch ME                                                       %    If failed, show the error message
+                r_ = eval([rlist{i,:},'*1000']);                           %            Try to evaluate r line i
+            catch ME                                                       %            If failed, show the error message
                 message = sprintf('Error in Resistors list line %d:\n%s', i, ME.message);
                 uiwait(errordlg(message));
-                isSolving(false, handles);                                 %        Triggger "isSolving(false)" function.
+                isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
             end
             
-            if(isempty(find(eval(rlist{i,:})<0, 1)) == 0)                  %    If R line i is/contains negative value, show the error message.
+            if(isempty(find(eval(rlist{i,:})<0, 1)) == 0)                  %        If R line i is/contains negative value, show the error message.
                 message = sprintf('Resistors must not be negative.\nTry to change the time range or resistor functions.');
                 uiwait(errordlg(message));
-                isSolving(false, handles);                                 %        Triggger "isSolving(false)" function.
-                return;                                                    %        Stop the function.
+                isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
+                return;                                                    %            Stop the function.
             end
             
             try
-                vin_ = eval(vinlist{i,:});                                 %    Try to evaluate vin line i
-            catch ME                                                       %    If failed, show the error message
+                vin_ = eval(vinlist{i,:});                                 %        Try to evaluate vin line i
+            catch ME                                                       %        If failed, show the error message
                 message = sprintf('Error in Vin list line %d:\n%s', i, ME.message);
                 uiwait(errordlg(message));
-                isSolving(false, handles);                                 %        Triggger "isSolving(false)" function.
+                isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
             end
             
-            sum1 = sum1 + vin_./r_;                                        %    sum1 = sum1 + vin1/r1 + vin2/r2 + ...
-            sum2 = sum2 + 1./r_;                                           %    sum2 = sum2 + 1/r1 + 1/r2
+            sum1 = sum1 + vin_./r_;                                        %        sum1 = sum1 + vin1/r1 + vin2/r2 + ...
+            sum2 = sum2 + 1./r_;                                           %        sum2 = sum2 + 1/r1 + 1/r2
         end
-        vout = (rf/r + 1).*sum1./sum2;                                     %    Calculate vout.
-        vin = eval(vinlist{str2double(get(handles.vinplottxtbox,'String')),:});
+        
+        if(vinplot == 0)                                                   %        Same as summing inverting circuit
+            vin = [];
+            for i=1:row
+                value = eval(vinlist{i,:});
+                if (isequal(size(value),[1 1]))
+                    vin = [vin;value*ones(size(t))];
+                else
+                    vin = [vin;value];
+                end
+            end
+        else
+            vin = eval(vinlist{vinplot,:});
+            if (isequal(size(vin),[1 1]))
+                vin = vin*ones(size(t));
+            end
+        end
+        
+        vout = (rf/r + 1).*sum1./sum2;                                     %        Calculate vout.
+        if (isequal(size(vout),[1 1]))
+            vout = vout*ones(size(t));
+        end
     end
     
     sameAxes = get(handles.sameaxeschkbox,'Value');                        %    Get "plot on the same axes" value.
-    isSameAxes(sameAxes,handles);                                          %    Trigger isSameAxes(true);
-    if(isequal(size(vin),[1 1]))                                           %    If vin is a constant
-        if(sameAxes == true)                                               %        If sameAxes is selected
-            axes(handles.sameaxes);                                        %            Select sameaxes.
-            plot(t, vin*ones(size(t)));                                    %            Generate vin as an array with the same size of t with the same value.
-            hold on;
-        else                                                               %        Else
-            axes(handles.vin);                                             %            Select vin axes.
-            plot(t, vin*ones(size(t)));                                    %            Generate vin as an array with the same size of t with the same value.
-            legend('Vin(t)');
-        end
-    else                                                                   %    Else (vin is not a constant)
-        if(sameAxes == true)                                               %        Same as above but plot vin directly.
-            axes(handles.sameaxes);
-            plot(t,vin);
-            hold on;
-        else
-            axes(handles.vin);
-            plot(t,vin);
-            legend('Vin(t)');
-        end
-        
-    end
-    
-    if(isequal(size(vout),[1 1]))                                          %    Same as above but vout.
-        if(sameAxes == true)
-            axes(handles.sameaxes);
-            plot(t, vout*ones(size(t)));
-            hold off;
-            legend('Vin(t)','Vout(t)');
-        else
-            axes(handles.vout);
-            plot(t, vout*ones(size(t)),'Color',[0.8500 0.3250 0.0980]);
-            legend('Vout(t)');
-        end
-    else
-        if(sameAxes == true)
-            axes(handles.sameaxes);
-            plot(t,vout);
-            hold off;
-            legend('Vin(t)','Vout(t)');
-        else
-            axes(handles.vout);
-            plot(t,vout,'Color',[0.8500 0.3250 0.0980]);
-            legend('Vout(t)');
-        end
+    isSameAxes(sameAxes,handles);                                          %    Trigger isSameAxes(sameAxes)
+    if(sameAxes == true)                                                   %    If plot on same axes is true
+        axes(handles.sameaxes);                                            %        Plot vin with blue color, vout with red color on a same axes.
+        vinplot = plot(t,vin,'Color',[0.000,  0.447,  0.741]);
+        hold on;
+        voutplot = plot(t,vout,'Color',[0.8500 0.3250 0.0980]);
+        hold off;
+        legend([vinplot(1),voutplot(1)],'Vin(t)','Vout(t)');               %        Add the legends.
+    else                                                                   %    Else
+        axes(handles.vin);                                                 %        Plot vin with blue color on vin axes, vout with red color on vout axes.
+        plot(t,vin,'Color',[0.000,  0.447,  0.741]);                       %            then add the legends.
+        legend('Vin(t)');
+        axes(handles.vout);
+        plot(t,vout,'Color',[0.8500 0.3250 0.0980]);
+        legend('Vout(t)');
     end
     
     gapsRatio = 0.1;                                                       % Gaps for 2 bound of y-axis.
@@ -883,7 +898,7 @@ if(get(hObject, 'Value') == 1)                                             % If 
         set(handles.vout, 'YLim', [minVout-gapsRatio*abs(minVout) maxVout+gapsRatio*abs(maxVout)]);
     end
     
-    if(get(handles.dcsourcebtn, 'Value') == 1 && isequal(size(vout),[1 1]))% If DC source select and vout is a constant
+    if(get(handles.dcsourcebtn, 'Value') == 1 && isequal(size(find(vout==vout(1))),size(vout)))% If DC source select and vout is a constant
         set(handles.voutdctxt,'String', 'Vout = ' + string(vout));         %    Show the vout constant value.
     else                                                                   % Else
         set(handles.voutdctxt,'String', '');                               %    Show nothing.

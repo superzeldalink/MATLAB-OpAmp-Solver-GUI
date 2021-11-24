@@ -22,7 +22,7 @@ function varargout = GUI(varargin)
 
 % Edit the above text to modify the response to help GUI
 
-% Last Modified by GUIDE v2.5 06-Nov-2021 22:29:48
+% Last Modified by GUIDE v2.5 24-Nov-2021 10:19:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -214,6 +214,74 @@ end
 
 % PLOT ON THE SAME AXES CHECKBOX
 function sameaxeschkbox_Callback(~, ~, ~)
+
+% VPLUS CHECKBOX
+function vplus_Callback(hObject, ~, handles)
+value = get(hObject, 'Value');
+if(value == 1)
+    set(handles.vplustxtbox, 'Enable', 'on');
+else
+    set(handles.vplustxtbox, 'Enable', 'off');
+end
+
+function vplus_CreateFcn(~, ~, ~)
+
+% VMINUS CHECKBOX
+function vminus_Callback(hObject, ~, handles)
+value = get(hObject, 'Value');
+if(value == 1)
+    set(handles.vminustxtbox, 'Enable', 'on');
+else
+    set(handles.vminustxtbox, 'Enable', 'off');
+end
+
+function vminus_CreateFcn(~, ~, ~)
+
+% VPLUS TEXTBOX
+function vplustxtbox_Callback(hObject, ~, handles)
+value = get(hObject, 'String');
+ignore = ["+","-","*","/","pi","^","exp","log","abs","mod"];
+if(contains(value,ignore))
+    try
+        value = eval(value);
+        set(handles.vplustxtbox, 'String', string(value));
+    catch ME
+        set(handles.vplustxtbox, 'String', '0');
+    end
+else
+    value = str2double(value);
+    if(isnan(value))
+        set(handles.vplustxtbox, 'String', '0');
+    end
+end
+
+function vplustxtbox_CreateFcn(hObject, ~, ~)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+% VMINUS TEXTBOX
+function vminustxtbox_Callback(~, ~, ~)
+value = get(hObject, 'String');
+ignore = ["+","-","*","/","pi","^","exp","log","abs","mod"];
+if(contains(value,ignore))
+    try
+        value = eval(value);
+        set(handles.vminustxtbox, 'String', string(value));
+    catch ME
+        set(handles.vminustxtbox, 'String', '0');
+    end
+else
+    value = str2double(value);
+    if(isnan(value))
+        set(handles.vminustxtbox, 'String', '0');
+    end
+end
+
+function vminustxtbox_CreateFcn(hObject, ~, ~)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 % ---------------------- RESISTORS PANEL ----------------------
 
@@ -578,19 +646,19 @@ end
 
 % ---------------------- SELF-DEFINED FUNCTIONS ----------------------
 
-    % IF THE PROGRAM IS SOLVING
-    % Lock the "Solve" button and change the text into "Please wait..." and
-    % revert if done.
-    function isSolving(True, handles)
-    if(True == false)
-        set(handles.solvebtn, 'String', 'Solve');
-        set(handles.solvebtn, 'Value', 0);
-        set(handles.solvebtn, 'Enable', 'on');
-    else
-        set(handles.solvebtn, 'String', 'Please wait...');
-        set(handles.solvebtn, 'Value', 1);
-        set(handles.solvebtn, 'Enable', 'off');
-    end
+% IF THE PROGRAM IS SOLVING
+% Lock the "Solve" button and change the text into "Please wait..." and
+% revert if done.
+function isSolving(True, handles)
+if(True == false)
+    set(handles.solvebtn, 'String', 'Solve');
+    set(handles.solvebtn, 'Value', 0);
+    set(handles.solvebtn, 'Enable', 'on');
+else
+    set(handles.solvebtn, 'String', 'Please wait...');
+    set(handles.solvebtn, 'Value', 1);
+    set(handles.solvebtn, 'Enable', 'off');
+end
 
 % IF SUMMING CIRCUIT IS SELECTED
 % Turn off all items which don't belongs to summing circuit and turn on
@@ -698,7 +766,7 @@ if(get(hObject, 'Value') == 1)                                             % If 
         end
     end
     
-    try                                                                    
+    try
         rf = eval([get(handles.rftxtbox,'String'),'*1000']);               %    Try to evalute Rf
     catch ME                                                               %    If failed, show the error message.
         message = sprintf('Error in Rf:\n%s', ME.message);
@@ -714,8 +782,8 @@ if(get(hObject, 'Value') == 1)                                             % If 
         isSolving(false, handles);                                         %    Triggger "isSolving(false)" function.
     end
     
-    if(isempty(find(r<0, 1)) == 0 || isempty(find(rf<0, 1)) == 0)          %    If Rf or R is/contains negative value(s), show the error message.
-        message = sprintf('Resistors must not be negative.\nTry to change the time range or resistor functions.');
+    if(isempty(find(r<=0, 1)) == 0 || isempty(find(rf<0, 1)) == 0)          %    If Rf or R is/contains negative value(s), show the error message.
+        message = sprintf('Resistor(s) must not be zero (except Rf) or negative.\nTry to change the time range or resistor value(s)/function(s).');
         uiwait(errordlg(message));
         isSolving(false, handles);                                         %        Triggger "isSolving(false)" function.
         return;                                                            %        Stop the function.
@@ -753,8 +821,8 @@ if(get(hObject, 'Value') == 1)                                             % If 
                 isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
             end
             
-            if(isempty(find(eval(rlist{i,:})<0, 1)) == 0)                  %        If R line i is/contains negative value, show the error message.
-                message = sprintf('Resistors must not be negative.\nTry to change the time range or resistor functions.');
+            if(isempty(find(eval(rlist{i,:})<=0, 1)) == 0)                  %        If R line i is/contains negative value, show the error message.
+                message = sprintf('Resistor(s) must not be zero (except Rf) or negative.\nTry to change the time range or resistor value(s)/function(s).');
                 uiwait(errordlg(message));
                 isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
                 return;                                                    %            Stop the function.
@@ -802,12 +870,12 @@ if(get(hObject, 'Value') == 1)                                             % If 
         if(row ~= row2)
             message = sprintf('The number of Vins and the number of resistors must be equal.');
             uiwait(errordlg(message));
-            isSolving(false, handles);                                     
-            return;                                         
+            isSolving(false, handles);
+            return;
         end
         
         sum1 = 0;                                                          %        Initiate sum1 and sum2.
-        sum2 = 0;                                                          
+        sum2 = 0;
         for i=1:row
             try
                 r_ = eval([rlist{i,:},'*1000']);                           %            Try to evaluate r line i
@@ -817,8 +885,8 @@ if(get(hObject, 'Value') == 1)                                             % If 
                 isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
             end
             
-            if(isempty(find(eval(rlist{i,:})<0, 1)) == 0)                  %        If R line i is/contains negative value, show the error message.
-                message = sprintf('Resistors must not be negative.\nTry to change the time range or resistor functions.');
+            if(isempty(find(eval(rlist{i,:})<=0, 1)) == 0)                  %        If R line i is/contains negative value, show the error message.
+                message = sprintf('Resistor(s) must not be zero (except Rf) or negative.\nTry to change the time range or resistor value(s)/function(s).');
                 uiwait(errordlg(message));
                 isSolving(false, handles);                                 %            Triggger "isSolving(false)" function.
                 return;                                                    %            Stop the function.
@@ -856,6 +924,33 @@ if(get(hObject, 'Value') == 1)                                             % If 
         vout = (rf/r + 1).*sum1./sum2;                                     %        Calculate vout.
         if (isequal(size(vout),[1 1]))
             vout = vout*ones(size(t));
+        end
+    end
+    
+    
+    vplus = str2double(get(handles.vplustxtbox,'String'));                 %    Get the value of vplus and vminus
+    vminus = str2double(get(handles.vminustxtbox,'String'));
+    
+    if(vplus < vminus)                                                     %    If vminus > vplus
+        set(handles.vplustxtbox,'String',string(vminus));                  %        Swap vplus and vminus
+        set(handles.vminustxtbox,'String',string(vplus));
+        vplus = str2double(get(handles.vplustxtbox,'String'));
+        vminus = str2double(get(handles.vminustxtbox,'String'));
+    end
+    
+    if(get(handles.vplus,'Value') == 1)                                    %    If vplus is check
+        for i=1:size(t,2)                                                  %        For each value in vout
+            if(vout(i) > vplus)                                            %            If vout > vplus
+                vout(i) = vplus;                                           %                vout = vplus
+            end
+        end
+    end
+    
+    if(get(handles.vminus,'Value') == 1)                                   %    If vminus is check
+        for i=1:size(t,2)                                                  %        For each value in vout
+            if(vout(i) < vminus)                                           %            If vout < vminus
+                vout(i) = vminus;                                          %                vout = vminus
+            end
         end
     end
     

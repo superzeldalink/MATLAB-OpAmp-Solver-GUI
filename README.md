@@ -39,7 +39,8 @@ Please consider carefully by using this.
 - **Step 5:** Press the “Solve” button and the results will shown up. 
 
 ## Screenshots
-- NEW FEATURE (inspired by our lecturer): V+, V- terminals of OpAmp for clipping the output.
+- **NEW FEATURE:** V+, V- terminals of OpAmp for clipping the output.
+  - Inspired by our lecturer - Assoc. Prof. H. H. Kha, Ho Chi Minh City University of Technology.
 
 ![image](https://user-images.githubusercontent.com/4103880/143171101-2367c948-6031-4e47-a575-a6456a1822e2.png)
 

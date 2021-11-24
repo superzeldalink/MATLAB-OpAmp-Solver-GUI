@@ -20,6 +20,7 @@ Please consider carefully by using this.
 - [x] Resistor (potentiometer) can be a function that changes over time (must not be negative).
 - [x] All inputs accept basic operations, e.g., +, -, *, /,^, abs, mod, log,...
 - [x] Plot all Vin in a same axes (for summing circuit).
+- [x] V+ and V- terminals of OpAmp for clipping the output.
 - [ ] Plot resistor function.
 - [ ] ??? (new feature(s))
 
@@ -38,15 +39,19 @@ Please consider carefully by using this.
 - **Step 5:** Press the “Solve” button and the results will shown up. 
 
 ## Screenshots
-- Inverting Amplifier with AC source
+- NEW FEATURE (inspired by our lecturer): V+, V- terminals of OpAmp for clipping the output.
+
+![image](https://user-images.githubusercontent.com/4103880/143171101-2367c948-6031-4e47-a575-a6456a1822e2.png)
+
+- Inverting Amplifier with AC source.
 
 ![image](https://user-images.githubusercontent.com/4103880/140642555-5507f013-2155-409d-a945-4488f70061a9.png)
 
-- Non-inverting Amplifier with custom function
+- Non-inverting Amplifier with custom function.
 
 ![image](https://user-images.githubusercontent.com/4103880/140642577-273e7043-aae6-46cc-a8b0-18cd445fecb3.png)
 
-- Summing Inverting Amplifier with a list of 3 Vins, 3 resistors
+- Summing Inverting Amplifier with a list of 3 Vins, 3 resistors.
 
 ![image](https://user-images.githubusercontent.com/4103880/140642588-2ef8a56a-8b1d-4651-8b29-888649ada3c3.png)
 
